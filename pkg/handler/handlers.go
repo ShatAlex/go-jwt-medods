@@ -1,8 +1,8 @@
 package handler
 
 import (
+	_ "github.com/ShatALex/TestTaskBackDev/docs"
 	"github.com/ShatALex/TestTaskBackDev/pkg/service"
-	_ "github.com/ShatAlex/TestTaskBackDev/docs"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"

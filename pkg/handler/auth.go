@@ -19,7 +19,6 @@ import (
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /auth/sign-up [post]
-
 func (h *Handler) signUp(c *gin.Context) {
 	var input tokens.SignUpUser
 
@@ -51,7 +50,6 @@ func (h *Handler) signUp(c *gin.Context) {
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /auth/sign-in [post]
-
 func (h *Handler) signIn(c *gin.Context) {
 
 	var input tokens.SignInUser
@@ -85,13 +83,12 @@ type refreshInput struct {
 // @ID refresh-tokens
 // @Accept  json
 // @Produce  json
-// @Param input body tokens.RefreshToken true "token"
+// @Param input body tokens.SwaggerRefresh true "token"
 // @Success 200 {integer} integer 1
 // @Failure 400,404 {object} errorResponse
 // @Failure 500 {object} errorResponse
 // @Failure default {object} errorResponse
 // @Router /tokens/refresh [post]
-
 func (h *Handler) refresh(c *gin.Context) {
 
 	var input refreshInput

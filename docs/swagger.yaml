@@ -1,11 +1,158 @@
 basePath: /
+definitions:
+  handler.errorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  tokens.SignInUser:
+    properties:
+      guid:
+        type: string
+    required:
+    - guid
+    type: object
+  tokens.SignUpUser:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  tokens.SwaggerRefresh:
+    properties:
+      refresh_token:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
   description: Test task BackDev
   title: go-fwt-medods
   version: "1.0"
-paths: {}
+paths:
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: endpoint for login
+      operationId: sign-in
+      parameters:
+      - description: account fields
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/tokens.SignInUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: SignIn
+      tags:
+      - auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: endpoint for creating account
+      operationId: sign-up
+      parameters:
+      - description: account fields
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/tokens.SignUpUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: SignUp
+      tags:
+      - auth
+  /tokens/refresh:
+    post:
+      consumes:
+      - application/json
+      description: refresh tokens
+      operationId: refresh-tokens
+      parameters:
+      - description: token
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/tokens.SwaggerRefresh'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Refresh tokens
+      tags:
+      - Tokens
 securityDefinitions:
   ApiKeyAuth:
     in: header

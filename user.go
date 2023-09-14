@@ -18,3 +18,7 @@ type SignUpUser struct {
 type SignInUser struct {
 	Guid string `json:"guid" bson:"guid" binding:"required"`
 }
+
+type SwaggerRefresh struct {
+	RefreshToken string `json:"refresh_token" bson:"refreshtoken"`
+}

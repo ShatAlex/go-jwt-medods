@@ -1,6 +1,6 @@
 port: "8080"
 
 mongo:
-  uri: "mongodb://127.0.0.1:27017"
+  uri: "mongodb://db:27017"
   name: "testdb"
   user_collection: "users"

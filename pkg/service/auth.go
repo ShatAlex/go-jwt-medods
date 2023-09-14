@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"strconv"
 	"time"
 
 	tokens "github.com/ShatALex/TestTaskBackDev"
@@ -17,7 +16,7 @@ import (
 )
 
 const (
-	// salt           = "fW52sz01fAPLGgZ"
+	salt           = "fW52sz01fAPLGgZ"
 	signingKey     = "asdwSBd#aLtN#ad14"
 	accessTokenTTL = 2 * time.Hour
 )
@@ -55,13 +54,11 @@ func (s *AuthService) GenerateTokens(ctx context.Context, guid string) (string, 
 		return "", "", err
 	}
 
-	guidHash := GenerateSHA512Hash(guid)
-
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, &tokenClaims{
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(accessTokenTTL).Unix(),
 		},
-		Guid: guidHash,
+		Guid: guid,
 	})
 
 	accessToken, err := token.SignedString([]byte(signingKey))
@@ -77,11 +74,7 @@ func (s *AuthService) GenerateTokens(ctx context.Context, guid string) (string, 
 	return accessToken, refreshToken, nil
 }
 
-func (s *AuthService) TakeGuidByRefToken(ctx context.Context, refreshToken string) (string, error) {
-	return s.rep.TakeGuidByRefToken(ctx, refreshToken)
-}
-
-func (s *AuthService) ParseToken(accessToken string) (int, error) {
+func (s *AuthService) ParseToken(accessToken string) (string, error) {
 	token, err := jwt.ParseWithClaims(accessToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
@@ -91,27 +84,26 @@ func (s *AuthService) ParseToken(accessToken string) (int, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
 	claims, ok := token.Claims.(*tokenClaims)
 	if !ok {
-		return 0, errors.New("token claims aren't of type *tokenCLaims")
+		return "", errors.New("token claims aren't of type *tokenCLaims")
 	}
 
-	guid, err := strconv.Atoi(claims.Guid)
-	if err != nil {
-		return 0, err
-	}
+	return claims.Guid, nil
+}
 
-	return guid, nil
+func (s *AuthService) ValidateRefreshToken(ctx context.Context, refreshToken string, guid string) bool {
+	return s.rep.ValidateRefreshToken(ctx, refreshToken, guid)
 }
 
 func GenerateSHA512Hash(guid string) string {
 	hash := sha512.New()
 	hash.Write([]byte(fmt.Sprint(guid)))
 
-	return fmt.Sprintf("%x", hash.Sum([]byte("")))
+	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
 
 func newRefreshToken() (string, error) {

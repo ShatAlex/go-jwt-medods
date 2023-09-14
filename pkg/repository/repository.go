@@ -10,7 +10,7 @@ import (
 type Authorization interface {
 	CreateUser(ctx context.Context, user tokens.User) (string, error)
 	SetRefreshToken(ctx context.Context, refreshToken, guid string) error
-	TakeGuidByRefToken(ctx context.Context, refreshToken string) (string, error)
+	ValidateRefreshToken(ctx context.Context, refreshToken string, guid string) bool
 }
 
 type Repository struct {

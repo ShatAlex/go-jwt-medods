@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+
+  db:
+    restart: always
+    image: mongo:latest
+    volumes:
+    - ./.database/mongo/data:/var/lib.mongo/data
+    ports:
+      - 27017:27017
+
+  go-jwt:
+    build: .
+    container_name: go-jwt
+    command: ./go-jwt
+    ports:
+      - '8080:8080'
+    depends_on:
+      - db

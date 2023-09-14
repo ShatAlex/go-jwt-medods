@@ -3,11 +3,9 @@ package repository
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	tokens "github.com/ShatALex/TestTaskBackDev"
-	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
@@ -56,28 +54,19 @@ func (r *AuthPostgres) SetRefreshToken(ctx context.Context, refreshToken, guid s
 	return nil
 }
 
-func (r *AuthPostgres) TakeGuidByRefToken(ctx context.Context, refreshToken string) (string, error) {
+func (r *AuthPostgres) ValidateRefreshToken(ctx context.Context, validateRefreshToken string, guid string) bool {
 
-	filter := bson.M{"refreshtoken": bson.M{"$ne": ""}}
-
-	cursor, err := r.db.Find(ctx, filter)
+	filter := bson.D{{"guid", guid}}
+	var user tokens.User
+	err := r.db.FindOne(ctx, filter).Decode(&user)
 	if err != nil {
-		logrus.Fatal(err)
+		return false
 	}
 
-	for cursor.Next(ctx) {
-		var user tokens.User
-		err := cursor.Decode(&user)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if err := bcrypt.CompareHashAndPassword([]byte(user.RefreshToken), []byte(refreshToken)); err == nil {
-			return user.Guid, nil
-		}
-
+	if err := bcrypt.CompareHashAndPassword([]byte(user.RefreshToken), []byte(validateRefreshToken)); err == nil {
+		return true
 	}
 
-	return "", err
+	return false
 
 }

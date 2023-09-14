@@ -5,20 +5,26 @@ import (
 	"github.com/ShatALex/TestTaskBackDev/pkg/handler"
 	"github.com/ShatALex/TestTaskBackDev/pkg/repository"
 	"github.com/ShatALex/TestTaskBackDev/pkg/service"
-	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
+
+// @title go-fwt-medods
+// @version 1.0
+// @description Test task BackDev
+
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 func main() {
 
 	logrus.SetFormatter(new(logrus.JSONFormatter))
 	if err := initConfig(); err != nil {
 		logrus.Fatalf("error initializing configs: %s", err.Error())
-	}
-
-	if err := godotenv.Load(); err != nil {
-		logrus.Fatalf("error loading env variables:%s", err.Error())
 	}
 
 	db := repository.NewMongoDB()
